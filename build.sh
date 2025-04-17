@@ -1,0 +1,118 @@
+#!/bin/bash
+
+# Argument parsing
+ISO_SOURCE=""
+ISO_MODIFIED=""
+PRESEED_FILE=""
+DEBUG=false
+CHECKSUM=false
+
+function usage() {
+    echo "Usage: $0 --in <source_iso> --out <modified_iso> --preseed <preseed_file> [--debug] [--checksum]"
+    exit 1
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --in)
+            ISO_SOURCE="$2"
+            shift 2
+            ;;
+        --out)
+            ISO_MODIFIED="$2"
+            shift 2
+            ;;
+        --preseed)
+            PRESEED_FILE="$2"
+            shift 2
+            ;;
+        --debug)
+            DEBUG=true
+            shift
+            ;;
+        --checksum)
+            CHECKSUM=true
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            usage
+            ;;
+    esac
+done
+
+if [[ -z "$ISO_SOURCE" || -z "$ISO_MODIFIED" || -z "$PRESEED_FILE" ]]; then
+    echo "Missing required arguments."
+    usage
+fi
+
+if $DEBUG; then
+    set -x
+    LOG="/dev/stdout"
+else
+    LOG="/dev/null"
+fi
+
+ISO_EXTRACT_DIR="isofiles"
+
+echo "Installing required packages..."
+sudo apt install -y xorriso isolinux >"$LOG" 2>&1
+
+echo "Creating extraction directory: $ISO_EXTRACT_DIR"
+mkdir -p "$ISO_EXTRACT_DIR" >"$LOG" 2>&1
+
+echo "Extracting ISO contents from $ISO_SOURCE..."
+xorriso -osirrox on -indev "$ISO_SOURCE" -extract / "$ISO_EXTRACT_DIR" >"$LOG" 2>&1
+
+echo "Modifying permissions for install.amd/"
+chmod +w -R "$ISO_EXTRACT_DIR/install.amd/" >"$LOG" 2>&1
+
+echo "Extracting and patching initrd with $PRESEED_FILE..."
+gunzip "$ISO_EXTRACT_DIR/install.amd/initrd.gz" >"$LOG" 2>&1
+cat "$PRESEED_FILE" | cpio -H newc -o -A -F "$ISO_EXTRACT_DIR/install.amd/initrd" >"$LOG" 2>&1
+gzip "$ISO_EXTRACT_DIR/install.amd/initrd" >"$LOG" 2>&1
+
+echo "Restoring permissions for install.amd/"
+chmod -w -R "$ISO_EXTRACT_DIR/install.amd/" >"$LOG" 2>&1
+
+echo "Updating boot menu labels..."
+sed -i 's/menu label ^Install/menu label ^Preseed Install/' "$ISO_EXTRACT_DIR/isolinux/txt.cfg" >"$LOG" 2>&1
+
+echo "Setting default install mode..."
+sed -i 's/default vesamenu.c32/default install/' "$ISO_EXTRACT_DIR/isolinux/isolinux.cfg" >"$LOG" 2>&1
+
+echo "Updating md5sum.txt..."
+chmod +w "$ISO_EXTRACT_DIR/md5sum.txt" >"$LOG" 2>&1
+find "$ISO_EXTRACT_DIR" -follow -type f ! -name md5sum.txt -print0 | xargs -0 md5sum > "$ISO_EXTRACT_DIR/md5sum.txt"
+chmod -w "$ISO_EXTRACT_DIR/md5sum.txt" >"$LOG" 2>&1
+
+echo "Creating modified ISO: $ISO_MODIFIED"
+xorriso -as mkisofs \
+    -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
+    -c isolinux/boot.cat \
+    -b isolinux/isolinux.bin \
+    -no-emul-boot \
+    -boot-load-size 4 \
+    -boot-info-table \
+    -eltorito-alt-boot \
+    -e boot/grub/efi.img \
+    -no-emul-boot \
+    -isohybrid-gpt-basdat \
+    -o "$ISO_MODIFIED" \
+    "$ISO_EXTRACT_DIR/" >"$LOG" 2>&1
+
+echo "ISO creation completed: $ISO_MODIFIED"
+
+if $CHECKSUM; then
+    echo "Generating checksums for $ISO_MODIFIED..."
+    MD5_SUM=$(md5sum "$ISO_MODIFIED" | awk '{print $1}')
+    SHA1_SUM=$(sha1sum "$ISO_MODIFIED" | awk '{print $1}')
+    SHA256_SUM=$(sha256sum "$ISO_MODIFIED" | awk '{print $1}')
+    SHA512_SUM=$(sha512sum "$ISO_MODIFIED" | awk '{print $1}')
+
+    echo "Checksums for $ISO_MODIFIED:"
+    echo "MD5:    $MD5_SUM"
+    echo "SHA1:   $SHA1_SUM"
+    echo "SHA256: $SHA256_SUM"
+    echo "SHA512: $SHA512_SUM"
+fi
