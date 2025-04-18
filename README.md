@@ -11,7 +11,7 @@
 4. [Usage](#-usage)
    - [Build ISO](#build-iso)
    - [Clear Temporary Files](#clear-temporary-files)
-6. [Upload](#upload)
+6. [Upload](#-upload)
    - [Proxmox](#proxmox)
 
 ## 📦 **Installation**
@@ -33,7 +33,7 @@ bash build.sh --in <source_iso> --out <modified_iso> --preseed <preseed_file> [-
 You can put the `--checksum` option to calculate and display the checksums of the newly generated ISO.
 There is also the `--debug` option to display messages during build.
 
-### Clear temporary file
+### Clear temporary files
 You can clean up the files that were created during generation with the command below.
 ```bash
 bash clear.sh
