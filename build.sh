@@ -104,7 +104,7 @@ if [[ ! -f "$PRESEED_FILE" ]]; then
     exit 1
 fi
 gunzip "$ISO_EXTRACT_DIR/install.amd/initrd.gz" >"$LOG" 2>&1
-cat "$PRESEED_FILE" | cpio -H newc -o -A -F "$ISO_EXTRACT_DIR/install.amd/initrd" >"$LOG" 2>&1
+echo $PRESEED_FILE | cpio -H newc -o -A -F "$ISO_EXTRACT_DIR/install.amd/initrd" >"$LOG" 2>&1
 gzip "$ISO_EXTRACT_DIR/install.amd/initrd" >"$LOG" 2>&1
 
 echo "Restoring permissions for install.amd/"
