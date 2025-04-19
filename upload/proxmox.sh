@@ -6,6 +6,7 @@ DEBUG=false
 
 function usage() {
     echo "Usage: $0 --url <host> --nodes <nodes> --iso <path> --token-id <id> [--token-secret <secret>] [--debug]"
+    echo "Or: $0 url=<host> nodes=<nodes> iso=<path> token-id=<id> [token-secret=<secret>] [debug]"
     exit 1
 }
 
@@ -37,6 +38,34 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
         --debug)
+            DEBUG=true
+            shift
+            ;;
+        url=*)
+            PROXMOX_HOST="${1#*=}"
+            shift
+            ;;
+        nodes=*)
+            PROXMOX_NODES="${1#*=}"
+            shift
+            ;;
+        storage=*)
+            STORAGE="${1#*=}"
+            shift
+            ;;
+        iso=*)
+            ISO_PATH="${1#*=}"
+            shift
+            ;;
+        token-id=*)
+            TOKEN_ID="${1#*=}"
+            shift
+            ;;
+        token-secret=*)
+            API_SECRET="${1#*=}"
+            shift
+            ;;
+        debug)
             DEBUG=true
             shift
             ;;

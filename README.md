@@ -52,6 +52,8 @@ There are also upload scripts to drop the generated iso onto a hypervisor.
 
 ```bash
 bash upload/proxmox.sh --url <host> --nodes <nodes> --iso <path> --token-id '<id>' [--token-secret <secret>] [--debug]
+# or with key=value style:
+bash upload/proxmox.sh url=<host> nodes=<nodes> iso=<path> token-id=<id> [token-secret=<secret>] [debug]
 ```
 
 ---
