@@ -6,6 +6,7 @@ ISO_MODIFIED=""
 PRESEED_FILE=""
 DEBUG=false
 CHECKSUM=false
+TMP_DIR=""
 
 function usage() {
     echo "Usage: $0 --in <source_iso> --out <modified_iso> --preseed <preseed_file> [--debug] [--checksum]"
@@ -56,7 +57,16 @@ fi
 ISO_EXTRACT_DIR="isofiles"
 
 echo "Installing required packages..."
-sudo apt install -y xorriso isolinux >"$LOG" 2>&1
+sudo apt install -y xorriso isolinux curl >"$LOG" 2>&1
+
+# If the ISO source is a remote URL, download it first
+if [[ "$ISO_SOURCE" =~ ^https?:// ]]; then
+    TMP_DIR=$(mktemp -d)
+    TMP_ISO="$TMP_DIR/source.iso"
+    echo "Downloading ISO from $ISO_SOURCE to $TMP_ISO..."
+    curl -L "$ISO_SOURCE" -o "$TMP_ISO"
+    ISO_SOURCE="$TMP_ISO"
+fi
 
 echo "Creating extraction directory: $ISO_EXTRACT_DIR"
 mkdir -p "$ISO_EXTRACT_DIR" >"$LOG" 2>&1
@@ -115,4 +125,10 @@ if $CHECKSUM; then
     echo "SHA1:   $SHA1_SUM"
     echo "SHA256: $SHA256_SUM"
     echo "SHA512: $SHA512_SUM"
+fi
+
+# Cleanup temp dir if created
+if [[ -n "$TMP_DIR" && -d "$TMP_DIR" ]]; then
+    echo "Cleaning up temporary directory: $TMP_DIR"
+    rm -rf "$TMP_DIR"
 fi

@@ -30,8 +30,10 @@ The `build.sh` script requires `sudo`.
 ```bash
 bash build.sh --in <source_iso> --out <modified_iso> --preseed <preseed_file> [--debug] [--checksum]
 ```
-You can put the `--checksum` option to calculate and display the checksums of the newly generated ISO.
-There is also the `--debug` option to display messages during build.
+
+- `<source_iso>` can be a local path **or** a remote URL starting with `https://`.
+- You can use the `--checksum` option to calculate and display the checksums of the newly generated ISO.
+- The `--debug` option displays detailed messages during the build process.
 
 ### Clear temporary files
 You can clean up the files that were created during generation with the command below.
