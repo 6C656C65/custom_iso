@@ -10,6 +10,7 @@ TMP_DIR=""
 
 function usage() {
     echo "Usage: $0 --in <source_iso> --out <modified_iso> --preseed <preseed_file> [--debug] [--checksum]"
+    echo "Or:    $0 in=<source_iso> out=<modified_iso> preseed=<preseed_file> [debug] [checksum]"
     exit 1
 }
 
@@ -32,6 +33,26 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --checksum)
+            CHECKSUM=true
+            shift
+            ;;
+        in=*)
+            ISO_SOURCE="${1#*=}"
+            shift
+            ;;
+        out=*)
+            ISO_MODIFIED="${1#*=}"
+            shift
+            ;;
+        preseed=*)
+            PRESEED_FILE="${1#*=}"
+            shift
+            ;;
+        debug)
+            DEBUG=true
+            shift
+            ;;
+        checksum)
             CHECKSUM=true
             shift
             ;;

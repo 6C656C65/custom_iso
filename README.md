@@ -29,6 +29,8 @@ An image must also be personalized. [Here](https://cdimage.debian.org/debian-cd/
 The `build.sh` script requires `sudo`.
 ```bash
 bash build.sh --in <source_iso> --out <modified_iso> --preseed <preseed_file> [--debug] [--checksum]
+# or with key=value style:
+bash build.sh in=<source_iso> out=<modified_iso> preseed=<preseed_file> [debug] [checksum]
 ```
 
 - `<source_iso>` can be a local path **or** a remote URL starting with `https://`.
