@@ -99,6 +99,10 @@ echo "Modifying permissions for install.amd/"
 chmod +w -R "$ISO_EXTRACT_DIR/install.amd/" >"$LOG" 2>&1
 
 echo "Extracting and patching initrd with $PRESEED_FILE..."
+if [[ ! -f "$PRESEED_FILE" ]]; then
+    echo "Error: Preseed file '$PRESEED_FILE' not found."
+    exit 1
+fi
 gunzip "$ISO_EXTRACT_DIR/install.amd/initrd.gz" >"$LOG" 2>&1
 cat "$PRESEED_FILE" | cpio -H newc -o -A -F "$ISO_EXTRACT_DIR/install.amd/initrd" >"$LOG" 2>&1
 gzip "$ISO_EXTRACT_DIR/install.amd/initrd" >"$LOG" 2>&1
