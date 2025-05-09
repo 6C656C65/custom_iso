@@ -5,15 +5,6 @@
 > [!WARNING]
 > Please note: the scripts have only been tested with `debian-12.10.0-amd64-netinst.iso`
 
-## 📑 **Table of Contents**
-
-1. [Installation](#-installation)
-4. [Usage](#-usage)
-   - [Build ISO](#build-iso)
-   - [Clear Temporary Files](#clear-temporary-files)
-6. [Upload](#-upload)
-   - [Proxmox](#proxmox)
-
 ## 📦 **Installation**
 
 ```bash
@@ -55,5 +46,11 @@ bash upload/proxmox.sh --url <host> --nodes <nodes> --iso <path> --token-id '<id
 # or with key=value style:
 bash upload/proxmox.sh url=<host> nodes=<nodes> iso=<path> token-id=<id> [token-secret=<secret>] [debug]
 ```
+
+## 🛠 **Ansible Role**
+
+An Ansible role is available to automate the process of building and uploading a custom ISO to a Proxmox server, as well as creating virtual machines from it.
+
+➡️ You can find the role here: [https://github.com/6C656C65/ansible_roles/tree/main/proxmox](https://github.com/6C656C65/ansible_roles/tree/main/proxmox)
 
 ---
