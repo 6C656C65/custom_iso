@@ -3,7 +3,7 @@
 **Custom ISO** is a simple project consisting of a few bash scripts. The scripts take an official ISO as input and output an ISO that will launch with a `preseed.cfg` file. This allows you to configure the image to have predefined values ​​in the preseed.
 
 > [!WARNING]
-> Please note: the scripts have only been tested with `debian-12.10.0-amd64-netinst.iso`
+> Please note: the scripts have only been tested with `debian-13.0.0-amd64-netinst.iso`.
 
 ## 📦 **Installation**
 
@@ -14,7 +14,7 @@ git clone https://github.com/6C656C65/custom_iso.git
 ## 🚀 **Usage**
 
 First you need a `preseed.cfg` file. [Here](https://www.debian.org/releases/stable/example-preseed.txt) is an official example for Debian.
-An image must also be personalized. [Here](https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.10.0-amd64-netinst.iso) for the official iso of `debian 12.10`.
+An image must also be personalized. [Here](https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-13.0.0-amd64-netinst.iso) for the official iso of `debian 13.0`.
 
 ### Build ISO
 The `build.sh` script requires `sudo`.

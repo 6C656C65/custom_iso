@@ -110,6 +110,9 @@ gzip "$ISO_EXTRACT_DIR/install.amd/initrd" >"$LOG" 2>&1
 echo "Restoring permissions for install.amd/"
 chmod -w -R "$ISO_EXTRACT_DIR/install.amd/" >"$LOG" 2>&1
 
+echo "Modifying permissions for isolinux/"
+chmod -R u+w "$ISO_EXTRACT_DIR/isolinux" >"$LOG" 2>&1
+
 echo "Updating boot menu labels..."
 sed -i 's/menu label ^Install/menu label ^Preseed Install/' "$ISO_EXTRACT_DIR/isolinux/txt.cfg" >"$LOG" 2>&1
 
